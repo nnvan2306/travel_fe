@@ -10,6 +10,10 @@ import {
     HStack,
     Icon,
     Image,
+    Radio,
+    RadioGroup,
+    Stack,
+    Text,
 } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ProductFormType } from '../../../type/product';
@@ -38,6 +42,9 @@ const ProductForm = ({ ...props }: Props) => {
     const {
         handleSubmit,
         formState: { errors },
+        setValue,
+        getValues,
+        watch,
     } = formMethods;
 
     const addNew = useAddNewProduct({
@@ -90,6 +97,8 @@ const ProductForm = ({ ...props }: Props) => {
             uploadFile.mutate(file);
         }
     };
+
+    watch();
 
     return (
         <Box {...props}>
@@ -189,7 +198,18 @@ const ProductForm = ({ ...props }: Props) => {
                             </FormControl>
                         </GridItem>
                         <GridItem>
-                            <FormControl isInvalid={Boolean(errors.available)}></FormControl>
+                            <FormControl isInvalid={Boolean(errors.available)}>
+                                <Text mb={3}>Trạng thái</Text>
+                                <RadioGroup
+                                    onChange={(e) => setValue('available', e === 'true')}
+                                    value={String(getValues('available'))}
+                                >
+                                    <Stack direction="row">
+                                        <Radio value="true">Còn phòng</Radio>
+                                        <Radio value="false">Hết phong</Radio>
+                                    </Stack>
+                                </RadioGroup>
+                            </FormControl>
                         </GridItem>
                     </Grid>
 

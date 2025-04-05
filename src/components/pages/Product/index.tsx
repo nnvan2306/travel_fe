@@ -21,7 +21,7 @@ const Product = () => {
     return (
         <ManagerTemplate>
             <Box>
-                <Tabs>
+                <Tabs isLazy lazyBehavior="unmount">
                     <TabList>
                         {tabsProduct.map((item) => {
                             return <Tab key={item.key}>{item.tab}</Tab>;

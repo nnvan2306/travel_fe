@@ -36,6 +36,7 @@ const ProductManager = () => {
             data?.data?.map((item: any) => {
                 return {
                     ...item,
+                    description: item?.description?.slice(0, 160) + '...',
                     available: item.available ? 'Phòng trống' : 'Phòng đã có người thuê',
                     action: (
                         <HStack>

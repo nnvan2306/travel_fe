@@ -9,11 +9,12 @@ import icons from '../../../constants/icons';
 import { useCreateOrder } from '../../../service/order/create';
 import { infoUser, isLogin } from '../../../store';
 import { routesMap } from '../../../routes/routes';
+import toast from '../../../libs/toast';
 
 const RoomDetail = () => {
     const { id } = useParams();
     const [currentImage, setCurrentImage] = useState<string>('');
-    const [quantity, setQuantity] = useState(0);
+    const [quantity, setQuantity] = useState(1);
 
     const navigate = useNavigate();
 
@@ -22,7 +23,12 @@ const RoomDetail = () => {
 
     const order = useCreateOrder({
         mutationConfig: {
-            onSuccess() {},
+            onSuccess() {
+                toast({
+                    status: 'success',
+                    title: 'Đặt phòng thành công!',
+                });
+            },
             onError() {},
         },
     });
@@ -102,7 +108,7 @@ const RoomDetail = () => {
                         <Button
                             rounded={0}
                             onClick={() => {
-                                if (quantity <= 0) {
+                                if (quantity <= 1) {
                                     return;
                                 } else {
                                     setQuantity(quantity - 1);

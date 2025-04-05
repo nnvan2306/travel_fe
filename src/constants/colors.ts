@@ -1,5 +1,5 @@
 const colors = {
-    brand: '#2b5624',
+    brand: '#66b3d4',
     green: '#006600',
 };
 
