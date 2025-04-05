@@ -1,7 +1,8 @@
 import Axios, { isAxiosError } from 'axios';
 
 const api = Axios.create({
-    baseURL: '',
+    baseURL: 'http://localhost:8080/api/v1/app',
+    withCredentials: true,
 });
 
 api.interceptors.request.use(
@@ -28,7 +29,7 @@ export default api;
 export const getAxiosError = (error: Error | null) => {
     if (!error) return '';
     if (isAxiosError(error)) {
-        const e = error.response?.data?.errors;
+        const e = error.response?.data?.msg;
 
         if (Array.isArray(e)) {
             return e[0] || '';
