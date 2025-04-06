@@ -25,5 +25,6 @@ export const useGetProduct = ({ queryConfig, id }: UseGetProductType) => {
     return useQuery({
         ...getProductOptions(id),
         ...queryConfig,
+        enabled: Boolean(id),
     });
 };

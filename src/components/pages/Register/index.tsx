@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Button,
@@ -19,6 +19,7 @@ import { getAxiosError } from '../../../libs/axios';
 import { RegisterType } from '../../../type/user';
 import { useNavigate } from 'react-router-dom';
 import { routesMap } from '../../../routes/routes';
+import { isLogin } from '../../../store';
 
 const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -62,6 +63,12 @@ const Register = () => {
     const handleRegister = () => {
         register.mutate(formData as RegisterType);
     };
+
+    useEffect(() => {
+        if (isLogin) {
+            navigate(routesMap.Home);
+        }
+    }, [navigate]);
 
     return (
         <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bg="gray.50">

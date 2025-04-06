@@ -22,12 +22,17 @@ import { useDeleteProduct } from '../../../../service/product/delete';
 import { isAxiosError } from 'axios';
 import toast from '../../../../libs/toast';
 import { getAxiosError } from '../../../../libs/axios';
+import { useSearchParams } from 'react-router-dom';
 
-const ProductManager = () => {
+type Props = {
+    onChangeTab: () => void;
+};
+const ProductManager = ({ onChangeTab }: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: IsOpenImages, onOpen: onOpenImages, onClose: onCloseImages } = useDisclosure();
     const [idDelete, setIdDelete] = useState(0);
     const [listImages, setListImages] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const { data, refetch } = useGetProducts({});
     const rooms = useMemo(
@@ -48,7 +53,13 @@ const ProductManager = () => {
                             >
                                 <Icon as={icons.trash} color="red" />
                             </Button>
-                            <Button>
+                            <Button
+                                onClick={() => {
+                                    searchParams.set('id', String(item?.id));
+                                    setSearchParams(searchParams);
+                                    onChangeTab();
+                                }}
+                            >
                                 <Icon as={icons.pen} color="orange" />
                             </Button>
                             <Button

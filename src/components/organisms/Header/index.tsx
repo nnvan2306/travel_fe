@@ -15,7 +15,7 @@ import colors from '../../../constants/colors';
 import { Link, useNavigate } from 'react-router-dom';
 import { routesMap } from '../../../routes/routes';
 import icons from '../../../constants/icons';
-import { infoUser, isAdmin } from '../../../store';
+import { infoUser, isAdmin, removeStore } from '../../../store';
 
 type Props = {} & BoxProps;
 const Header = ({ ...props }: Props) => {
@@ -61,13 +61,25 @@ const Header = ({ ...props }: Props) => {
                                             w="full"
                                             py={2}
                                             _hover={{
-                                                background: 'mediumGray',
+                                                background: '#f4f4f4',
                                             }}
                                         >
                                             Quản lý
                                         </Text>
                                     </Link>
                                 ) : null}
+                                <Text
+                                    pl={4}
+                                    w="full"
+                                    py={2}
+                                    cursor="pointer"
+                                    _hover={{
+                                        background: '#f4f4f4',
+                                    }}
+                                    onClick={() => removeStore()}
+                                >
+                                    Đăng xuất
+                                </Text>
                             </VStack>
                         </PopoverBody>
                     </PopoverContent>

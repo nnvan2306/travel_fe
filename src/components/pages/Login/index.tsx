@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Button,
@@ -17,7 +17,7 @@ import { useLogin } from '../../../service/user/login';
 import toast from '../../../libs/toast';
 import { isAxiosError } from 'axios';
 import { getAxiosError } from '../../../libs/axios';
-import { setStore } from '../../../store';
+import { isLogin, setStore } from '../../../store';
 import { useNavigate } from 'react-router-dom';
 import { routesMap } from '../../../routes/routes';
 
@@ -57,6 +57,12 @@ const Login = () => {
         e.preventDefault();
         login.mutate(formData);
     };
+
+    useEffect(() => {
+        if (isLogin) {
+            navigate(routesMap.Home);
+        }
+    }, [navigate]);
 
     return (
         <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" bg="gray.50">

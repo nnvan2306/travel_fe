@@ -25,14 +25,21 @@ import toast from '../../../libs/toast';
 import { isAxiosError } from 'axios';
 import { getAxiosError } from '../../../libs/axios';
 import { useUploadFile } from '../../../service/product/upload-file';
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import icons from '../../../constants/icons';
 import TextAreaCustom from '../../atoms/TextArea';
+import { useSearchParams } from 'react-router-dom';
+import { useGetProduct } from '../../../service/product/get-product';
+import { useUpdateProduct } from '../../../service/product/update';
 
 type Props = {} & BoxProps;
 const ProductForm = ({ ...props }: Props) => {
     const [files, setFiles] = useState<string[]>([]);
+    const [newFiles, setNewFiles] = useState<string[]>([]);
+    const [oldFiles, setOldFiles] = useState<number[]>([]);
     const ref = useRef<HTMLInputElement>(null);
+    const [searchParams] = useSearchParams();
+    const id = searchParams.get('id');
 
     const formMethods = useForm<ProductFormType>({
         resolver: yupResolver(productFormSchema),
@@ -46,6 +53,9 @@ const ProductForm = ({ ...props }: Props) => {
         getValues,
         watch,
     } = formMethods;
+
+    const { data } = useGetProduct({ id: Number(id) });
+    const room = useMemo(() => data?.data, [data]);
 
     const addNew = useAddNewProduct({
         mutationConfig: {
@@ -68,11 +78,22 @@ const ProductForm = ({ ...props }: Props) => {
         },
     });
 
+    const updateProduct = useUpdateProduct({
+        mutationConfig: {
+            onSuccess() {},
+            onError() {},
+        },
+    });
+
     const uploadFile = useUploadFile({
         mutationConfig: {
             onSuccess(data) {
-                const newFiles = [...files, data?.data?.url_public];
-                setFiles(newFiles);
+                const newFilesUpload = [...files, data?.data?.url_public];
+                setFiles(newFilesUpload);
+                if (id) {
+                    const newList = [...newFiles, data?.data?.url_public];
+                    setNewFiles(newList);
+                }
             },
             onError(error) {
                 if (isAxiosError(error)) {
@@ -98,18 +119,34 @@ const ProductForm = ({ ...props }: Props) => {
         }
     };
 
+    const handleSubmitForm = (data: ProductFormType) => {
+        if (!id) {
+            addNew.mutate({
+                ...data,
+                listFile: files,
+            });
+        } else {
+            updateProduct.mutate({
+                ...data,
+                id: room?.id,
+                listFile: newFiles,
+                listOldFile: oldFiles,
+            });
+        }
+    };
+
     watch();
+
+    useEffect(() => {
+        if (room) {
+            setFiles(room?.images?.map((item) => item?.url));
+            formMethods.reset(room);
+        }
+    }, [room]);
 
     return (
         <Box {...props}>
-            <form
-                onSubmit={handleSubmit((data) =>
-                    addNew.mutate({
-                        ...data,
-                        listFile: files,
-                    }),
-                )}
-            >
+            <form onSubmit={handleSubmit(handleSubmitForm)}>
                 <FormProvider {...formMethods}>
                     <Box mb={6}>
                         <HStack justifyContent="end">
@@ -146,6 +183,16 @@ const ProductForm = ({ ...props }: Props) => {
                                                   cursor="pointer"
                                                   onClick={() => {
                                                       const newFiles = files.filter((item) => item !== item);
+                                                      if (id) {
+                                                          const listOld = [
+                                                              ...oldFiles,
+                                                              room?.images?.find(
+                                                                  (itemChild: { id: number; url: string }) =>
+                                                                      itemChild?.url === item,
+                                                              )?.id,
+                                                          ];
+                                                          setOldFiles(listOld);
+                                                      }
                                                       setFiles(newFiles);
                                                   }}
                                               />

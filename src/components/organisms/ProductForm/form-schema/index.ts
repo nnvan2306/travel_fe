@@ -7,7 +7,7 @@ export const productFormSchema = yup.object().shape({
     address: yup.string().required('Địa chỉ không được để trống'),
     roomType: yup.string().required('Loại phòng không được để trống'),
     available: yup.boolean(),
-    listFile: yup.array(),
+    listFile: yup.array().of(yup.string()),
 });
 
 export const defaultProductFormSchema = {

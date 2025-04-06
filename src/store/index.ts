@@ -1,16 +1,24 @@
 import { UserResponseType } from '../type/user';
 
-export const isLogin = window.localStorage.getItem('isLogin');
-export const isAdmin = window.localStorage.getItem('isAdmin') === 'true';
-export const infoUser = JSON.parse(window.localStorage.getItem('infoUser') || '');
+export const isLogin = typeof window !== 'undefined' ? window.localStorage.getItem('isLogin') === 'true' : false;
 
-export const setStore = (data: UserResponseType) => {
+export const isAdmin = typeof window !== 'undefined' ? window.localStorage.getItem('isAdmin') === 'true' : false;
+
+export const infoUser =
+    typeof window !== 'undefined' ? JSON.parse(window.localStorage.getItem('infoUser') || 'null') : null;
+
+export const setStore = (data: UserResponseType): void => {
+    if (typeof window === 'undefined') return;
     const local = window.localStorage;
     local.setItem('isLogin', 'true');
-    if (data?.role === 'admin') {
-        local.setItem('isAdmin', 'true');
-    } else {
-        local.setItem('isAdmin', 'false');
-    }
+    local.setItem('isAdmin', data.role === 'admin' ? 'true' : 'false');
     local.setItem('infoUser', JSON.stringify(data));
+};
+
+export const removeStore = (): void => {
+    if (typeof window === 'undefined') return;
+    const local = window.localStorage;
+    local.removeItem('isLogin');
+    local.removeItem('isAdmin');
+    local.removeItem('infoUser');
 };
